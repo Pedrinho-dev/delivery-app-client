@@ -4,8 +4,8 @@
 
 <template>
     <div class="profile-page">
-        <h1>Minha Conta</h1>
-        <p>Dados do usuário...</p>
+        <h1>My Profile</h1>
+        <p>User Data...</p>
     </div>
 </template>
 

@@ -16,6 +16,7 @@
           type="text"
           v-model="destinoTexto"
           placeholder="Where to?"
+          @focus="$router.push('/selectAdress')"
         />
       </div>
     </div>
@@ -28,15 +29,6 @@
     </div>
 
     <div class="baseboard">
-      <router-link to="/home" class="tab">
-        <v-icon icon="mdi-home-account"></v-icon>
-        <span>Home</span>
-      </router-link>
-
-      <router-link to="/profile" class="tab">
-        <v-icon icon="mdi-account"></v-icon>
-        <span>Profile</span>
-      </router-link>
     </div>
   </div>
 </template>
@@ -179,6 +171,7 @@ function calcularRota(destination) {
   padding-left: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   z-index: 20;
+  color: black;
 }
 
 .acount_balance{
@@ -206,15 +199,11 @@ function calcularRota(destination) {
   width: 260px;
 }
 
-.input-box label {
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .input-box input {
   width: 90%;
   padding: 8px;
   margin-top: 2px;
+  color: black;
 }
 
 .baseboard{
@@ -254,5 +243,6 @@ function calcularRota(destination) {
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0,0,0,0.15);
   z-index: 9999;
+  color: black;
 }
 </style>
