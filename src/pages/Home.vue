@@ -14,18 +14,18 @@
         <input
           ref="searchInput"
           type="text"
-          v-model="destinoTexto"
+          v-model="destinationText"
           placeholder="Where to?"
-          @focus="$router.push('/selectAdress')"
+          @focus="$router.push('/selectaddress')"
         />
       </div>
     </div>
 
     <div ref="mapRef" class="map"></div>
     
-    <div v-if="distancia && tempo" class="box-info">
-      <p><strong>Distância:</strong> {{ distancia }}</p>
-      <p><strong>Tempo estimado:</strong> {{ tempo }}</p>
+    <div v-if="distance && time" class="box-info">
+      <p><strong>Distance:</strong> {{ distance }}</p>
+      <p><strong>Estimate Time:</strong> {{ time }}</p>
     </div>
 
     <div class="baseboard">
@@ -38,11 +38,11 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { loadGoogleMaps } from '../composables/useGoogleMaps'
 
-const distancia = ref(null)
-const tempo = ref(null)
+const distance = ref(null)
+const time = ref(null)
 
-const origemTexto = ref("")      // <-- Endereço atual
-const destinoTexto = ref("")     // <-- Endereço escolhido
+const originText = ref("")      // <-- Endereço atual
+const destinationText = ref("")     // <-- Endereço escolhido
 
 const mapRef = ref(null)
 const searchInput = ref(null)
@@ -66,29 +66,29 @@ onMounted(async () => {
     }
 
 
-    await buscarEnderecoAtual(apiKey)
+    await findCurrentAddress(apiKey)
 
-    iniciarMapa(google)
+    startMap(google)
 
   }, async () => {
 
     userPosition = { lat: -20.4697, lng: -54.6201 }
 
-    await buscarEnderecoAtual(apiKey)
-    iniciarMapa(google)
+    await findCurrentAddress(apiKey)
+    startMap(google)
   })
 })
 
-async function buscarEnderecoAtual(apiKey) {
+async function findCurrentAddress(apiKey) {
   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userPosition.lat},${userPosition.lng}&key=${apiKey}`
   const response = await axios.get(url)
 
-  origemTexto.value = response.data.results[0].formatted_address
+  originText.value = response.data.results[0].formatted_address
 
-  console.log(origemTexto.value)
+  console.log(originText.value)
 }
 
-function iniciarMapa(google) {
+function startMap(google) {
 
   map = new google.Map(mapRef.value, {
     center: userPosition,
@@ -98,7 +98,7 @@ function iniciarMapa(google) {
   marker = new google.Marker({
     position: userPosition,
     map,
-    title: 'Sua localização'
+    title: 'Your location'
   })
 
   directionsService = new google.DirectionsService()
@@ -113,18 +113,18 @@ function iniciarMapa(google) {
     const place = autocomplete.getPlace()
     if (!place.geometry) return
 
-    destinoTexto.value = place.formatted_address
+    destinationText.value = place.formatted_address
 
     const destination = {
       lat: place.geometry.location.lat(),
       lng: place.geometry.location.lng()
     }
 
-    calcularRota(destination)
+    calculateRoute(destination)
   })
 }
 
-function calcularRota(destination) {
+function calculateRoute(destination) {
   directionsService.route(
     {
       origin: userPosition,
@@ -138,8 +138,8 @@ function calcularRota(destination) {
         const distance = result.routes[0].legs[0].distance.text
         const duration = result.routes[0].legs[0].duration.text
         
-        distancia.value = distance
-        tempo.value = duration
+        distance.value = distance
+        time.value = duration
       }
     }
   )

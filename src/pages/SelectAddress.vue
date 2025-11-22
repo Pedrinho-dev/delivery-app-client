@@ -9,14 +9,14 @@
             
             <v-text-field
                 label="Your location"
-                v-model= "origem"
+                v-model= "origin"
                 readonly
                 prepend-inner-icon="mdi-crosshairs-gps"
             />
 
             <v-text-field
-                v-model="destino"
-                ref="destinoInput"
+                v-model="destination"
+                ref="destinationInput"
                 placeholder="Where go?"
                 prepend-inner-icon="mdi-map-marker"
             /> 
@@ -80,7 +80,7 @@
                 class="fixed-btn"
                 color="black"
                 block
-                @click="confirmar"
+                @click="confirm"
             >
                 Next
             </v-btn>
@@ -98,9 +98,9 @@ import { loadGoogleMaps } from "@/composables/useGoogleMaps";
 import { useAddressStore } from "@/stores/addressStores";
 
 const addressStores = useAddressStore();
-const origem = ref ("")
-const destino = ref ("")
-const destinoInput = ref(null)
+const origin = ref ("")
+const destination = ref ("")
+const destinationInput = ref(null)
 
 let autocomplete
 let userPosition = null
@@ -115,12 +115,12 @@ onMounted(async ()=> {
             lng: pos.coords.longitude
         }
 
-        await buscarEnderecoAtual(apiKey)
+        await findCurrentAddress(apiKey)
 
-       const inputEl = destinoInput.value?.$el?.querySelector('input')
+       const inputEl = destinationInput.value?.$el?.querySelector('input')
 
        if (!inputEl) {
-        console.error("Input do destino não encontrado!")
+        console.error("Destination Input not found")
         return
     }
         autocomplete = new google.places.Autocomplete(inputEl, {
@@ -129,30 +129,30 @@ onMounted(async ()=> {
 
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace()
-            if (place.geometry) destino.value = place.formatted_address
+            if (place.geometry) destination.value = place.formatted_address
         })
       }
     )
 })
 
-    async function buscarEnderecoAtual(apiKey) {
+    async function findCurrentAddress(apiKey) {
         const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userPosition.lat},${userPosition.lng}&key=${apiKey}`
         const response = await axios.get(url)
 
-        origem.value = response.data.results[0].formatted_address
+        origin.value = response.data.results[0].formatted_address
     }
 
-    function confirmar(){
+    function confirm(){
         const orders = [{
-            origin: origem.value,
-            destiny: destino.value
+            origin: origin.value,
+            destiny: destination.value
         }]
 
         addressStores.setOrders(orders)
         
         console.log("Salvo no Pinia:")
-        console.log("Origem: ", origem.value)
-        console.log("Destino: ", destino.value)
+        console.log("Origem: ", origin.value)
+        console.log("Destino: ", destination.value)
     }
 
 </script>
