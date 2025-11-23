@@ -19,7 +19,11 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
-    '/SignUp': RouteRecordInfo<'/SignUp', '/SignUp', Record<never, never>, Record<never, never>>,
+    '/Account': RouteRecordInfo<'/Account', '/Account', Record<never, never>, Record<never, never>>,
+    '/Home': RouteRecordInfo<'/Home', '/Home', Record<never, never>, Record<never, never>>,
+    '/Job': RouteRecordInfo<'/Job', '/Job', Record<never, never>, Record<never, never>>,
+    '/Profile': RouteRecordInfo<'/Profile', '/Profile', Record<never, never>, Record<never, never>>,
+    '/SelectAddress': RouteRecordInfo<'/SelectAddress', '/SelectAddress', Record<never, never>, Record<never, never>>,
   }
 
   /**
@@ -37,8 +41,24 @@ declare module 'vue-router/auto-routes' {
       routes: '/'
       views: never
     }
-    'src/pages/SignUp.vue': {
-      routes: '/SignUp'
+    'src/pages/Account.vue': {
+      routes: '/Account'
+      views: never
+    }
+    'src/pages/Home.vue': {
+      routes: '/Home'
+      views: never
+    }
+    'src/pages/Job.vue': {
+      routes: '/Job'
+      views: never
+    }
+    'src/pages/Profile.vue': {
+      routes: '/Profile'
+      views: never
+    }
+    'src/pages/SelectAddress.vue': {
+      routes: '/SelectAddress'
       views: never
     }
   }
