@@ -1,14 +1,13 @@
-<script setup>
-
-</script>
-
 <template>
     <div class="profile-page">
         <h1>My Profile</h1>
         <p>User Data...</p>
     </div>
+    <BaseboardMenu/>
 </template>
 
-<style scoped>
+<script setup>
+import BaseboardMenu from "@/components/BaseboardMenu.vue"
+</script>
 
-</style>
+<style scoped></style>
