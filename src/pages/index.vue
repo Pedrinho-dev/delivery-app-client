@@ -57,7 +57,6 @@
       </div>
     </v-sheet>
 
-    <!-- Floating Alert -->
     <v-alert
       v-model="isAlertVisible"
       :type="feedbackType"
@@ -83,10 +82,8 @@ import { ref } from "vue";
 const authStore = useAuthStore();
 const name = ref("");
 const password = ref("");
-
-// Alert State
 const feedbackMessage = ref("");
-const feedbackType = ref("error"); // 'error' | 'success'
+const feedbackType = ref("error");
 const isAlertVisible = ref(false);
 
 async function login() {
@@ -94,13 +91,12 @@ async function login() {
     const user = { name: name.value, password: password.value };
     await authStore.login(user);
 
-    // Success handling
     feedbackMessage.value = "Login Successful!";
     feedbackType.value = "success";
     isAlertVisible.value = true;
   } catch (error) {
     console.error(error);
-    // Error handling
+
     feedbackMessage.value =
       error.response?.data?.message ||
       "Login failed. Please check your credentials.";
@@ -119,8 +115,8 @@ async function login() {
   z-index: 9999;
   width: 90%;
   max-width: 400px;
-  background-color: #181e36 !important; /* Fundo Dark */
+  background-color: #181e36 !important;
   color: white !important;
-  border: 1px solid #00e676; /* Borda Verde Neon sutil */
+  border: 1px solid #00e676;
 }
 </style>

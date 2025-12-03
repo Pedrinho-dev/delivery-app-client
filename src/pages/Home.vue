@@ -39,8 +39,8 @@ import { loadGoogleMaps } from "../composables/useGoogleMaps";
 const distance = ref(null);
 const time = ref(null);
 
-const originText = ref(""); // <-- Endereço atual
-const destinationText = ref(""); // <-- Endereço escolhido
+const originText = ref("");
+const destinationText = ref("");
 
 const mapRef = ref(null);
 const searchInput = ref(null);

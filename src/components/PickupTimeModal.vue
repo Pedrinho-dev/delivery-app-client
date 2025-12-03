@@ -29,8 +29,8 @@
         </v-sheet>
 
         <v-sheet
-          class="d-flex justify-center w-100 mb-12 position-relative"
-          style="height: 200px"
+          class="d-flex justify-center align-center w-100 mb-12 position-relative"
+          style="height: 200px; gap: 16px"
           color="transparent"
         >
           <v-sheet class="scroll-column" @wheel.prevent color="transparent">
@@ -40,10 +40,9 @@
               :key="m"
               class="picker-item"
               color="transparent"
-              :class="{
-                'text-white font-weight-bold text-h6': selected.month === m,
-              }"
-              :style="selected.month !== m ? 'color: #B0BEC5' : ''"
+              :class="
+                selected.month === m ? 'item-selected' : 'item-unselected'
+              "
               @click="selected.month = m"
             >
               {{ m }}
@@ -58,10 +57,7 @@
               :key="d"
               class="picker-item"
               color="transparent"
-              :class="{
-                'text-white font-weight-bold text-h6': selected.day === d,
-              }"
-              :style="selected.day !== d ? 'color: #B0BEC5' : ''"
+              :class="selected.day === d ? 'item-selected' : 'item-unselected'"
               @click="selected.day = d"
             >
               {{ d }}
@@ -76,10 +72,7 @@
               :key="h"
               class="picker-item"
               color="transparent"
-              :class="{
-                'text-white font-weight-bold text-h6': selected.hour === h,
-              }"
-              :style="selected.hour !== h ? 'color: #B0BEC5' : ''"
+              :class="selected.hour === h ? 'item-selected' : 'item-unselected'"
               @click="selected.hour = h"
             >
               {{ h }}
@@ -94,10 +87,7 @@
               :key="p"
               class="picker-item"
               color="transparent"
-              :class="{
-                'text-white font-weight-bold text-h6': selected.ampm === p,
-              }"
-              :style="selected.ampm !== p ? 'color: #B0BEC5' : ''"
+              :class="selected.ampm === p ? 'item-selected' : 'item-unselected'"
               @click="selected.ampm = p"
             >
               {{ p }}
@@ -151,7 +141,6 @@ const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const hours = Array.from({ length: 12 }, (_, i) => i + 1);
 const periods = ["AM", "PM"];
 
-// Estado Reativo da Seleção
 const selected = reactive({
   month: "January",
   day: 1,
@@ -159,7 +148,6 @@ const selected = reactive({
   ampm: "AM",
 });
 
-// Sincronização do Modal
 watch(
   () => props.modelValue,
   (val) => {
@@ -208,7 +196,6 @@ function confirmSelection() {
 </script>
 
 <style scoped>
-/* Coluna Rolável */
 .scroll-column {
   height: 100%;
   overflow-y: scroll;
@@ -218,7 +205,6 @@ function confirmSelection() {
   scrollbar-width: none;
 }
 
-/* Item Individual (Mês, Dia, Ano) */
 .picker-item {
   height: 50px;
   display: flex;
@@ -229,7 +215,19 @@ function confirmSelection() {
   transition: all 0.2s ease;
 }
 
-/*  Espaçador Invisível */
+.item-unselected {
+  color: #b0bec5 !important;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.item-selected {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem;
+  opacity: 1;
+}
+
 .spacer-item {
   height: 75px;
 }
