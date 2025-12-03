@@ -27,7 +27,7 @@
       <p><strong>Estimate Time:</strong> {{ time }}</p>
     </div>
 
-    <div class="baseboard"></div>
+    <BaseboardMenu/>
   </div>
 </template>
 
@@ -35,6 +35,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { loadGoogleMaps } from "../composables/useGoogleMaps";
+import BaseboardMenu from "@/components/BaseboardMenu.vue";
 
 const distance = ref(null);
 const time = ref(null);
