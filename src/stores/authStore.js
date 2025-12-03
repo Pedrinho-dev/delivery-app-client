@@ -16,10 +16,9 @@ export const useAuthStore = defineStore("auth", {
         localStorage.setItem("token", this.auth);
         localStorage.setItem("userId", this.user._id);
         router.push("/home");
-        alert("Welcome: " + this.user.name);
+        router.push("/home");
       } catch (err) {
-        alert("Error on login");
-        console.log(err);
+        throw err;
       }
     },
 
@@ -27,11 +26,10 @@ export const useAuthStore = defineStore("auth", {
       try {
         const response = await api.post("/auth/register", user);
         this.user = response.data;
-        alert("User Succssfuly created!!");
+        this.user = response.data;
         await this.login(user);
       } catch (err) {
-        alert("Error on create!");
-        console.log(err);
+        throw err;
       }
     },
   },

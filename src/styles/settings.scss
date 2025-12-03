@@ -8,3 +8,17 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+
+.v-alert {
+  background-color: #1f293a !important;
+  color: #ffffff !important;
+  border: 1px solid transparent;
+
+  &.v-alert--type-success {
+    border-color: #00e676 !important;
+  }
+
+  &.v-alert--type-error {
+    border-color: #ef5350 !important;
+  }
+}
