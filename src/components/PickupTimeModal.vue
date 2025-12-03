@@ -23,11 +23,7 @@
           style="height: 200px"
           color="transparent"
         >
-          <v-sheet
-            class="scroll-column"
-            @scroll="onScroll($event, 'month')"
-            @wheel.prevent
-          >
+          <v-sheet class="scroll-column" @wheel.prevent>
             <v-sheet class="spacer-item"></v-sheet>
             <v-sheet
               v-for="m in months"
@@ -44,11 +40,7 @@
             <v-sheet class="spacer-item"></v-sheet>
           </v-sheet>
 
-          <v-sheet
-            class="scroll-column"
-            @scroll="onScroll($event, 'day')"
-            @wheel.prevent
-          >
+          <v-sheet class="scroll-column" @wheel.prevent>
             <v-sheet class="spacer-item"></v-sheet>
             <v-sheet
               v-for="d in days"
@@ -65,11 +57,7 @@
             <v-sheet class="spacer-item"></v-sheet>
           </v-sheet>
 
-          <v-sheet
-            class="scroll-column"
-            @scroll="onScroll($event, 'hour')"
-            @wheel.prevent
-          >
+          <v-sheet class="scroll-column" @wheel.prevent>
             <v-sheet class="spacer-item"></v-sheet>
             <v-sheet
               v-for="h in hours"
@@ -86,11 +74,7 @@
             <v-sheet class="spacer-item"></v-sheet>
           </v-sheet>
 
-          <v-sheet
-            class="scroll-column"
-            @scroll="onScroll($event, 'ampm')"
-            @wheel.prevent
-          >
+          <v-sheet class="scroll-column" @wheel.prevent>
             <v-sheet class="spacer-item"></v-sheet>
             <v-sheet
               v-for="p in periods"
