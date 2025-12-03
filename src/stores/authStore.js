@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
-import router from '@/router';
-import api from "../axios/api.js"
+import { defineStore } from "pinia";
+import router from "@/router";
+import api from "../axios/api.js";
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
     auth: [],
     user: [],
@@ -15,13 +15,12 @@ export const useAuthStore = defineStore('auth', {
         this.user = response.data.user;
         localStorage.setItem("token", this.auth);
         localStorage.setItem("userId", this.user._id);
-        router.push("/home")
-        alert("Welcome: " + this.user.name)
+        router.push("/home");
+        alert("Welcome: " + this.user.name);
       } catch (err) {
         alert("Error on login");
-        console.log(err)
+        console.log(err);
       }
-
     },
 
     async signUp(user) {
@@ -32,9 +31,8 @@ export const useAuthStore = defineStore('auth', {
         await this.login(user);
       } catch (err) {
         alert("Error on create!");
-        console.log(err)
+        console.log(err);
       }
-
-    }
-  }
-})
+    },
+  },
+});

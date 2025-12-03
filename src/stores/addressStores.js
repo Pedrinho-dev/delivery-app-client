@@ -1,15 +1,15 @@
 import { defineStore } from "pinia";
 
-export const useAddressStore = defineStore('address', {
-    state: () => ({
-        origem: "",
-        destino: "",
-    }),
+export const useAddressStore = defineStore("address", {
+  state: () => ({
+    origin: null,
+    destination: null,
+  }),
 
-    actions: {
-        setOrders(order) {
-            this.origem = order.origin;
-            this.destino = order.destiny;
-        },
+  actions: {
+    setOrders(order) {
+      this.origin = order.origin;
+      this.destination = order.destination;
     },
-})
+  },
+});
