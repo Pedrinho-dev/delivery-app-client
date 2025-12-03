@@ -23,6 +23,7 @@ declare module 'vue-router/auto-routes' {
     '/Home': RouteRecordInfo<'/Home', '/Home', Record<never, never>, Record<never, never>>,
     '/Job': RouteRecordInfo<'/Job', '/Job', Record<never, never>, Record<never, never>>,
     '/Profile': RouteRecordInfo<'/Profile', '/Profile', Record<never, never>, Record<never, never>>,
+    '/ScheduleTransport': RouteRecordInfo<'/ScheduleTransport', '/ScheduleTransport', Record<never, never>, Record<never, never>>,
     '/SelectAddress': RouteRecordInfo<'/SelectAddress', '/SelectAddress', Record<never, never>, Record<never, never>>,
     '/SignUp': RouteRecordInfo<'/SignUp', '/SignUp', Record<never, never>, Record<never, never>>,
   }
@@ -56,6 +57,10 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/Profile.vue': {
       routes: '/Profile'
+      views: never
+    }
+    'src/pages/ScheduleTransport.vue': {
+      routes: '/ScheduleTransport'
       views: never
     }
     'src/pages/SelectAddress.vue': {
