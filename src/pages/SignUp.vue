@@ -83,9 +83,8 @@ const useAuth = useAuthStore();
 const name = ref("");
 const password = ref("");
 
-// Alert State
 const feedbackMessage = ref("");
-const feedbackType = ref("error"); // 'error' | 'success'
+const feedbackType = ref("error");
 const isAlertVisible = ref(false);
 
 async function createUser() {
@@ -94,15 +93,10 @@ async function createUser() {
     console.log(user);
     await useAuth.signUp(user);
 
-    // Success handling
     feedbackMessage.value = "Account created successfully!";
     feedbackType.value = "success";
     isAlertVisible.value = true;
-
-    // Optional: Redirect after success
-    // setTimeout(() => router.push('/'), 2000);
   } catch (error) {
-    // Error handling
     feedbackMessage.value =
       error.response?.data?.message || "Failed to create account.";
     feedbackType.value = "error";
@@ -124,9 +118,9 @@ function goBack() {
   z-index: 9999;
   width: 90%;
   max-width: 400px;
-  background-color: #181e36 !important; /* Fundo Dark */
+  background-color: #181e36 !important;
   color: white !important;
-  border: 1px solid #00e676; /* Borda Verde Neon sutil */
+  border: 1px solid #00e676;
 }
 
 .cursor-pointer {

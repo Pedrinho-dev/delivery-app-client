@@ -268,7 +268,6 @@ function initiateMap(google) {
   directionsRenderer = new google.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
-  // Use destination from store
   if (addressStore.destination) {
     calculateRoute(addressStore.destination);
   }
@@ -295,14 +294,12 @@ watch(
   () => transportStore.scheduleType,
   (newValue) => {
     if (newValue === "later") {
-      // Sync addresses to transportStore before opening modal
       if (addressStore.origin) transportStore.origin = addressStore.origin;
       if (addressStore.destination)
         transportStore.destination = addressStore.destination;
 
       showDateModal.value = true;
     } else if (newValue === "now") {
-      // Sync addresses to transportStore before creating order
       if (addressStore.origin) transportStore.origin = addressStore.origin;
       if (addressStore.destination)
         transportStore.destination = addressStore.destination;
