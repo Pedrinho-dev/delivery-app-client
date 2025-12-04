@@ -133,7 +133,7 @@ let clientMarker;
 let destinationMarker;
 let pollingInterval = null;
 
-// Coordenadas
+
 const clientLocation = ref(null);
 const destinationLocation = ref(null);
 const driverLocation = ref(null);
@@ -147,7 +147,7 @@ onMounted(async () => {
 
     await initializeMap(google);
 
-    // Iniciar polling para verificar mudança de finalLoc
+
     startPolling();
 });
 
@@ -166,19 +166,19 @@ async function loadOrderData() {
             const latestOrder = response.data[response.data.length - 1];
             orderId.value = latestOrder._id;
 
-            // Verificar se já está na rota final
+
             isFinalRoute.value = latestOrder.finalLoc || false;
 
-            // Obter coordenadas dos endereços
+
             await geocodeAddresses(latestOrder);
 
-            // Carregar endereços do pedido APÓS geocodificação
+
             if (isFinalRoute.value) {
-                // Rota final: cliente -> destino
+
                 currentOrigin.value = latestOrder.clientLoc || "Loading...";
                 currentDestination.value = latestOrder.destinyLoc || "Loading...";
             } else {
-                // Rota inicial: motorista -> cliente
+      
                 currentOrigin.value = latestOrder.locDeliveryMan || "Driver Location";
                 currentDestination.value = latestOrder.clientLoc || "Loading...";
             }
@@ -192,7 +192,7 @@ async function geocodeAddresses(order) {
     const apiKey = "AIzaSyCoQ58bNGXYgXOMKAlTjPjgrr6_4N2gyY0";
 
     try {
-        // Geocode cliente
+   
         if (order.clientLoc) {
             const clientResponse = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(order.clientLoc)}&key=${apiKey}`
@@ -205,7 +205,7 @@ async function geocodeAddresses(order) {
             clientLocation.value = addressStore.origin;
         }
 
-        // Geocode destino
+
         if (order.destinyLoc) {
             const destResponse = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(order.destinyLoc)}&key=${apiKey}`
@@ -218,7 +218,7 @@ async function geocodeAddresses(order) {
             destinationLocation.value = addressStore.destination;
         }
 
-        // Geocode motorista (se disponível)
+    
         if (order.locDeliveryMan) {
             const driverResponse = await axios.get(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(order.locDeliveryMan)}&key=${apiKey}`
@@ -228,12 +228,12 @@ async function geocodeAddresses(order) {
                 driverLocation.value = { lat: location.lat, lng: location.lng };
             }
         } else {
-            // Localização padrão do motorista (caso não esteja definida)
+     
             driverLocation.value = { lat: -20.4650, lng: -54.6180 };
         }
     } catch (error) {
         console.error("Erro ao geocodificar endereços:", error);
-        // Fallback para coordenadas padrão
+
         if (!clientLocation.value) {
             clientLocation.value = addressStore.origin || { lat: -20.4697, lng: -54.6201 };
         }
@@ -247,15 +247,15 @@ async function geocodeAddresses(order) {
 }
 
 async function initializeMap(google) {
-    // Calcular centro do mapa
+
     let centerLat, centerLng;
 
     if (isFinalRoute.value) {
-        // Rota final: centro entre cliente e destino
+        
         centerLat = (clientLocation.value.lat + destinationLocation.value.lat) / 2;
         centerLng = (clientLocation.value.lng + destinationLocation.value.lng) / 2;
     } else {
-        // Rota inicial: centro entre motorista e cliente
+      
         centerLat = (driverLocation.value.lat + clientLocation.value.lat) / 2;
         centerLng = (driverLocation.value.lng + clientLocation.value.lng) / 2;
     }
@@ -281,10 +281,10 @@ async function initializeMap(google) {
         ],
     });
 
-    // Criar marcadores
+ 
     createMarkers(google);
 
-    // Serviço de direções
+
     directionsService = new google.DirectionsService();
     directionsRenderer = new google.DirectionsRenderer({
         map: map,
@@ -295,12 +295,12 @@ async function initializeMap(google) {
         },
     });
 
-    // Desenhar rota inicial
+
     drawRoute();
 }
 
 function createMarkers(google) {
-    // Marcador do motorista (apenas se NÃO estiver na rota final)
+ 
     if (!isFinalRoute.value) {
         driverMarker = new google.Marker({
             position: driverLocation.value,
@@ -317,7 +317,7 @@ function createMarkers(google) {
         });
     }
 
-    // Marcador do cliente (sempre visível)
+ 
     clientMarker = new google.Marker({
         position: clientLocation.value,
         map,
@@ -332,7 +332,7 @@ function createMarkers(google) {
         },
     });
 
-    // Marcador do destino (sempre visível)
+
     destinationMarker = new google.Marker({
         position: destinationLocation.value,
         map,
@@ -352,11 +352,10 @@ function drawRoute() {
     let origin, destination;
 
     if (isFinalRoute.value) {
-        // Rota final: do cliente ao destino
         origin = clientLocation.value;
         destination = destinationLocation.value;
     } else {
-        // Rota inicial: do motorista ao cliente
+
         origin = driverLocation.value;
         destination = clientLocation.value;
     }
@@ -378,7 +377,7 @@ function drawRoute() {
 }
 
 async function startPolling() {
-    // Verificar mudança de finalLoc a cada 3 segundos
+
     pollingInterval = setInterval(async () => {
         await checkFinalLocStatus();
     }, 3000);
@@ -391,24 +390,24 @@ async function checkFinalLocStatus() {
         const response = await api.get(`/order/${orderId.value}`);
         const order = response.data;
 
-        // Verificar se mudou para rota final
+
         if (order.finalLoc === true && !isFinalRoute.value) {
             isFinalRoute.value = true;
 
-            // Atualizar textos para rota final
+
             currentOrigin.value = order.clientLoc;
             currentDestination.value = order.destinyLoc;
 
-            // Remover marcador do motorista
+        
             if (driverMarker) {
                 driverMarker.setMap(null);
                 driverMarker = null;
             }
 
-            // Redesenhar rota (cliente -> destino)
+       
             drawRoute();
 
-            // Recentrar mapa
+          
             const centerLat = (clientLocation.value.lat + destinationLocation.value.lat) / 2;
             const centerLng = (clientLocation.value.lng + destinationLocation.value.lng) / 2;
             map.setCenter({ lat: centerLat, lng: centerLng });
