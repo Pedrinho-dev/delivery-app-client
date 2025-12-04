@@ -90,20 +90,8 @@ async function login() {
   try {
     const user = { name: name.value, password: password.value };
     await authStore.login(user);
-
-    feedbackMessage.value = "Login Successful!";
-    feedbackType.value = "success";
-    isAlertVisible.value = true;
-  } catch (error) {
-    console.error(error);
-
-    feedbackMessage.value =
-      error.response?.data?.message ||
-      "Login failed. Please check your credentials.";
-    feedbackType.value = "error";
-    isAlertVisible.value = true;
-  }
 }
+
 </script>
 
 <style scoped>

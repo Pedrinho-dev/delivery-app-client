@@ -32,10 +32,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import { loadGoogleMaps } from "../composables/useGoogleMaps";
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 import BaseboardMenu from "@/components/BaseboardMenu.vue";
+import { loadGoogleMaps } from '../composables/useGoogleMaps'
 
 const distance = ref(null);
 const time = ref(null);

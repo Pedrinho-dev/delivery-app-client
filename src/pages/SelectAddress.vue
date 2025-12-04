@@ -151,21 +151,36 @@ async function findCurrentAddress(apiKey) {
   originData.address = address;
 }
 
-function confirm() {
-  const orders = [
-    {
-      origin: originData,
-      destination: destinationData,
+async function confirm() {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
+  if (!destinationData.lat || !destinationData.lng) {
+    alert("Select a valid destination.");
+    return;
+  }
+
+  const body = {
+    clientLoc: `${originData.lat},${originData.lng}`,     // STRING
+    destinyLoc: `${destinationData.lat},${destinationData.lng}`, // STRING
+    idClient: userId,                                     // ID DO CLIENTE
+    accept: false
+  };
+
+  console.log("Enviando pedido:", body);
+
+  await fetch("http://localhost:3000/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token
     },
-  ];
+    body: JSON.stringify(body)
+  });
 
-  addressStores.setOrders(orders[0]);
-
-  console.log("Salvo no Pinia:");
-  console.log("Origem: ", origin.value);
-  console.log("Destino: ", destination.value);
   router.push("/scheduletransport");
 }
+
 </script>
 
 <style scoped>
