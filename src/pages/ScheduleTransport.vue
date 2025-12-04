@@ -1,31 +1,38 @@
 <template>
   <v-container
-    class="fill-height pa-0 d-flex flex-column align-start bg-white"
+    class="fill-height pa-0 d-flex flex-column align-start"
+    style="background-color: #101326"
     fluid
   >
     <!-- Header -->
-    <v-sheet class="d-flex align-center w-100 pa-4" color="white">
+    <v-sheet class="d-flex align-center w-100 pa-4" color="#181e36">
       <v-btn
         icon="mdi-chevron-left"
         variant="text"
         @click="$router.push('/selectaddress')"
+        color="white"
       ></v-btn>
-      <span class="text-h6 font-weight-bold ml-2">Schedule a Transport</span>
+      <span class="text-h6 font-weight-bold ml-2 text-white"
+        >Schedule a Transport</span
+      >
     </v-sheet>
 
     <!-- Map -->
     <v-sheet
       class="w-100 flex-grow-1 position-relative"
       style="max-height: 550px"
-      color="white"
+      color="#101326"
     >
       <div ref="mapRef" class="w-100 h-100"></div>
     </v-sheet>
 
     <!-- Schedule Options -->
-    <v-sheet class="w-100 pa-4 mt-5 pb-16" color="white">
+    <v-sheet class="w-100 pa-4 mt-5 pb-16" color="#101326">
       <v-row justify="center">
-        <v-col cols="12" class="text-h6 font-weight-bold text-center">
+        <v-col
+          cols="12"
+          class="text-h6 font-weight-bold text-center text-white"
+        >
           Schedule it Anytime
         </v-col>
       </v-row>
@@ -36,22 +43,31 @@
         class="w-100"
       >
         <v-sheet
-          class="d-flex align-center justify-space-between w-100 mb-6"
+          class="d-flex align-center justify-space-between w-100 mb-6 rounded-lg pa-3"
           @click="transportStore.setScheduleType('now')"
-          color="white"
+          :color="
+            transportStore.scheduleType === 'now' ? '#181e36' : 'transparent'
+          "
+          style="border: 1px solid #2e3a59; cursor: pointer"
         >
           <v-row no-gutters align-center>
             <v-col cols="auto">
               <v-icon
                 icon="mdi-clock"
-                color="black"
+                color="#00E676"
                 size="40"
                 class="mr-4"
               ></v-icon>
             </v-col>
             <v-col>
-              <v-sheet class="text-body-1 font-weight-bold">Now</v-sheet>
-              <v-sheet class="text-caption text-grey">On-Demand</v-sheet>
+              <v-sheet
+                class="text-body-1 font-weight-bold text-white"
+                color="transparent"
+                >Now</v-sheet
+              >
+              <v-sheet class="text-caption text-grey" color="transparent"
+                >On-Demand</v-sheet
+              >
             </v-col>
           </v-row>
 
@@ -62,28 +78,35 @@
           <v-spacer></v-spacer>
           <v-spacer></v-spacer>
 
-          <v-radio value="now" color="black" class="ma-0 ml-1"></v-radio>
+          <v-radio value="now" color="#00E676" class="ma-0 ml-1"></v-radio>
         </v-sheet>
 
         <v-sheet
-          class="d-flex align-center justify-space-between w-100"
+          class="d-flex align-center justify-space-between w-100 rounded-lg pa-3"
           @click="transportStore.setScheduleType('later')"
-          color="white"
+          :color="
+            transportStore.scheduleType === 'later' ? '#181e36' : 'transparent'
+          "
+          style="border: 1px solid #2e3a59; cursor: pointer"
         >
           <v-row no-gutters align-center>
             <v-col cols="auto">
               <v-icon
                 icon="mdi-clock-outline"
-                color="black"
+                color="#00E676"
                 size="40"
                 class="mr-4"
               ></v-icon>
             </v-col>
             <v-col>
-              <v-sheet class="text-body-1 font-weight-bold"
+              <v-sheet
+                class="text-body-1 font-weight-bold text-white"
+                color="transparent"
                 >Pickup Later</v-sheet
               >
-              <v-sheet class="text-caption text-grey">Schedule</v-sheet>
+              <v-sheet class="text-caption text-grey" color="transparent"
+                >Schedule</v-sheet
+              >
             </v-col>
           </v-row>
 
@@ -93,7 +116,7 @@
           <v-spacer></v-spacer>
           <v-spacer></v-spacer>
 
-          <v-radio value="later" color="black" class="ma-0 ml-1"></v-radio>
+          <v-radio value="later" color="#00E676" class="ma-0 ml-1"></v-radio>
         </v-sheet>
       </v-radio-group>
     </v-sheet>
@@ -163,6 +186,76 @@ function initiateMap(google) {
     center: userPosition,
     zoom: 15,
     disableDefaultUI: true,
+    styles: [
+      { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+      { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+      {
+        featureType: "administrative.locality",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#d59563" }],
+      },
+      {
+        featureType: "poi",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#d59563" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "geometry",
+        stylers: [{ color: "#263c3f" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#6b9a76" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{ color: "#38414e" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#212a37" }],
+      },
+      {
+        featureType: "road",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9ca5b3" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#746855" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#1f2835" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#f3d19c" }],
+      },
+      {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#17263c" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#515c6d" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#17263c" }],
+      },
+    ],
   });
 
   new google.Marker({
@@ -175,7 +268,6 @@ function initiateMap(google) {
   directionsRenderer = new google.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
-  // Use destination from store
   if (addressStore.destination) {
     calculateRoute(addressStore.destination);
   }
@@ -202,20 +294,18 @@ watch(
   () => transportStore.scheduleType,
   (newValue) => {
     if (newValue === "later") {
-      // Sync addresses to transportStore before opening modal
       if (addressStore.origin) transportStore.origin = addressStore.origin;
       if (addressStore.destination)
         transportStore.destination = addressStore.destination;
 
       showDateModal.value = true;
     } else if (newValue === "now") {
-      // Sync addresses to transportStore before creating order
       if (addressStore.origin) transportStore.origin = addressStore.origin;
       if (addressStore.destination)
         transportStore.destination = addressStore.destination;
 
       transportStore.createOrder("now");
-      router.push("/finding-driver");
+      router.push("/findingdriver");
     }
   }
 );

@@ -11,6 +11,12 @@
         v-model="origin"
         readonly
         prepend-inner-icon="mdi-crosshairs-gps"
+        variant="solo-filled"
+        bg-color="#181e36"
+        color="white"
+        flat
+        hide-details
+        class="mb-4 rounded-xl"
       />
 
       <v-text-field
@@ -18,6 +24,12 @@
         ref="destinationInput"
         placeholder="Where go?"
         prepend-inner-icon="mdi-map-marker"
+        variant="solo-filled"
+        bg-color="#181e36"
+        color="white"
+        flat
+        hide-details
+        class="mb-6 rounded-xl"
       />
 
       <div class="previous-destinations">
@@ -65,7 +77,7 @@
         <v-divider horizontal class="mx-3"></v-divider>
       </div>
 
-      <v-btn class="fixed-btn" color="black" block @click="confirm">
+      <v-btn class="fixed-btn" color="#00E676" block @click="confirm">
         Next
       </v-btn>
     </div>
@@ -174,17 +186,30 @@ async function confirm() {
 <style scoped>
 .select-container {
   width: 100%;
-  height: 100%;
-  background: white;
-  color: black;
+  min-height: 100vh;
+  background: #101326;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
 }
 
 .header-map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 60px;
+  display: flex;
   align-items: center;
   justify-content: left;
   gap: 2rem;
   font-size: 15px;
+  color: #ffffff;
+  background-color: #101326;
+  z-index: 10;
+  padding-left: 20px;
 }
 
 .form-box {
@@ -195,8 +220,31 @@ async function confirm() {
   padding: 20px;
 }
 
+:deep(.v-field) {
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+:deep(.v-field__input) {
+  color: #ffffff !important;
+}
+
+:deep(.v-label) {
+  color: #8f9bb3 !important;
+}
+
+:deep(.v-icon) {
+  color: #00e676 !important;
+}
+
 .previous-destinations {
   padding-bottom: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #181e36;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .title-icon {
@@ -207,6 +255,7 @@ async function confirm() {
 
 .title-icon h2 {
   font-size: 16px;
+  color: #ffffff;
 }
 
 span {
@@ -215,6 +264,7 @@ span {
   padding: 4px;
   font-size: 14px;
   margin-left: 20px;
+  color: #8f9bb3;
 }
 
 .fixed-btn {
@@ -222,5 +272,8 @@ span {
   left: 50%;
   bottom: 80px;
   transform: translateX(-50%);
+  color: #000000 !important;
+  border-radius: 12px;
+  font-weight: bold;
 }
 </style>
