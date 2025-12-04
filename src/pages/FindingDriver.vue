@@ -135,11 +135,10 @@ onMounted(async () => {
         transportStore.destination ||
         addressStore.destination || { lat: -20.4611, lng: -54.6056 };
 
-    // Calcular centro entre origem e destino
+
     const centerLat = (originCoords.lat + destinationCoords.lat) / 2;
     const centerLng = (originCoords.lng + destinationCoords.lng) / 2;
 
-    // Inicializar mapa
     map = new google.Map(mapRef.value, {
         center: { lat: centerLat, lng: centerLng },
         zoom: 13,
@@ -161,19 +160,19 @@ onMounted(async () => {
         ],
     });
 
-    // Iniciar polling para verificar status do pedido
+
     startPolling();
 });
 
 onUnmounted(() => {
-    // Limpar intervalo ao sair da página
+ 
     if (pollingInterval) {
         clearInterval(pollingInterval);
     }
 });
 
 async function startPolling() {
-    // Verificar status a cada 3 segundos
+ 
     pollingInterval = setInterval(async () => {
         await checkOrderStatus();
     }, 1000);
@@ -183,24 +182,24 @@ async function checkOrderStatus() {
     try {
         const userId = localStorage.getItem("userId");
 
-        // Buscar os pedidos do usuário
+  
         const response = await api.get(`/order?idClient=${userId}`);
 
         if (response.data && response.data.length > 0) {
-            // Pegar o pedido mais recente
+          
             const latestOrder = response.data[response.data.length - 1];
 
-            // Verificar se foi aceito
+         
             if (latestOrder.accept === true) {
-                // Parar o polling
+             
                 if (pollingInterval) {
                     clearInterval(pollingInterval);
                 }
 
-                // Salvar ID do pedido aceito
+      
                 orderId.value = latestOrder._id;
 
-                // Navegar para tela de pedido aceito
+          
                 router.push('/acceptorder');
             }
         }
@@ -211,7 +210,7 @@ async function checkOrderStatus() {
 
 function retry() {
     console.log("Retrying to find driver...");
-    // Reiniciar o polling se necessário
+    
     if (!pollingInterval) {
         startPolling();
     }
