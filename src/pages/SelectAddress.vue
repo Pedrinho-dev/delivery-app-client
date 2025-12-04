@@ -209,20 +209,6 @@ async function confirm() {
   };
 
   console.log("Enviando pedido:", body);
-
-  try {
-    await fetch("http://localhost:3000/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify(body),
-    });
-  } catch (error) {
-    console.error("Error creating order:", error);
-  }
-
   router.push("/scheduletransport");
 }
 </script>
