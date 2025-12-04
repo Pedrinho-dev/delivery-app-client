@@ -21,6 +21,9 @@ const password = ref("");
 async  function login(){
     const user = { name: name.value, password: password.value};
     await authStore.login(user);
+
+    localStorage.setItem("userId", response.user._id);
+    localStorage.setItem("token", response.token);
 }
 
 </script>

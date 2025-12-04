@@ -70,7 +70,7 @@ export const useTransportStore = defineStore("transport", {
       };
 
       try {
-        const response = await api.post("/order/", orderPayload);
+        const response = await api.post("/orders/", orderPayload);
         console.log("Pedido agendado criado com sucesso:", response.data);
         return response.data;
       } catch (error) {
