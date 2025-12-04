@@ -1,41 +1,41 @@
 <template>
   <div class="baseboard">
-    <div class="tab" :class="{ active: route.name === 'Home' }" @click="$router.push('/')">
-      <v-icon icon="mdi-home"></v-icon>
-      Home
+    <div class="tab" @click="$router.push('/')">
+      <v-icon icon="mdi-home" color="#00E676" size="24"></v-icon>
+      <span>Home</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Job' }" @click="$router.push('/job')">
-      <v-icon icon="mdi-truck"></v-icon>
-      Job
+    <div class="tab" @click="$router.push('/job')">
+      <v-icon icon="mdi-truck" color="#00E676" size="24"></v-icon>
+      <span>Job</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Logout' }" @click="logout">
-      <v-icon icon="mdi-logout"></v-icon>
-      Logout
+    <div class="tab" @click="logout">
+      <v-icon icon="mdi-logout" color="#00E676" size="24"></v-icon>
+      <span>Logout</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Account' }" @click="$router.push('/account')">
-      <v-icon icon="mdi-bank"></v-icon>
-      Account
+    <div class="tab" @click="$router.push('/account')">
+      <v-icon icon="mdi-bank" color="#00E676" size="24"></v-icon>
+      <span>Account</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Profile' }" @click="$router.push('/profile')">
-      <v-icon icon="mdi-account"></v-icon>
-      Profile
+    <div class="tab" @click="$router.push('/profile')">
+      <v-icon icon="mdi-account" color="#00E676" size="24"></v-icon>
+      <span>Profile</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
-const route = useRoute();
+import { useRouter } from "vue-router";
+
 const router = useRouter();
 
 async function logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  router.push('/login');
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  router.push("/login");
 }
 </script>
 
@@ -61,20 +61,6 @@ async function logout() {
   gap: 4px;
   font-size: 14px;
   cursor: pointer;
-  color: #8f9bb3;
-}
-
-.tab.active::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 20%;
-  height: 4px;
-  background: #00e676;
-  border-radius: 2px;
-}
-
-.tab.active {
   color: #00e676;
 }
 </style>

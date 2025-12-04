@@ -61,8 +61,8 @@ export const useTransportStore = defineStore("transport", {
       const idClient = authStore.user?._id || localStorage.getItem("userId");
 
       const orderPayload = {
-        clientLoc: this.origin?.address || "",
-        destinyLoc: this.destination?.address || "",
+        clientLoc: this.origin?.address || "Endereço não identificado",
+        destinyLoc: this.destination?.address || "Destino não identificado",
         schedule: date,
         accept: false,
         idClient: idClient,
@@ -70,7 +70,7 @@ export const useTransportStore = defineStore("transport", {
       };
 
       try {
-        const response = await api.post("/orders/", orderPayload);
+        const response = await api.post("/order", orderPayload);
         console.log("Pedido agendado criado com sucesso:", response.data);
         return response.data;
       } catch (error) {
@@ -92,7 +92,7 @@ export const useTransportStore = defineStore("transport", {
       };
 
       try {
-        const response = await api.post("/order/", orderPayload);
+        const response = await api.post("/order", orderPayload);
         console.log("Pedido criado com sucesso:", response.data);
         return response.data;
       } catch (error) {
