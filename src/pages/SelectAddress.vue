@@ -9,7 +9,7 @@
       <v-text-field
         label="Your location"
         v-model="origin"
-        readonly
+        ref="originInput"
         prepend-inner-icon="mdi-crosshairs-gps"
         variant="solo-filled"
         bg-color="#181e36"
@@ -98,9 +98,11 @@ const router = useRouter();
 const addressStores = useAddressStore();
 const origin = ref("");
 const destination = ref("");
+const originInput = ref(null);
 const destinationInput = ref(null);
 
-let autocomplete;
+let originAutocomplete;
+let destinationAutocomplete;
 let originData = { lat: null, lng: null, address: "" };
 let destinationData = { lat: null, lng: null, address: "" };
 let userPosition = null;
@@ -109,36 +111,62 @@ onMounted(async () => {
   const apiKey = "AIzaSyCoQ58bNGXYgXOMKAlTjPjgrr6_4N2gyY0";
   const google = await loadGoogleMaps(apiKey, ["places"]);
 
-  const inputEl = destinationInput.value?.$el?.querySelector("input");
-
-  if (inputEl) {
-    autocomplete = new google.places.Autocomplete(inputEl, {
+  // Setup Origin Autocomplete
+  const originEl = originInput.value?.$el?.querySelector("input");
+  if (originEl) {
+    originAutocomplete = new google.places.Autocomplete(originEl, {
       fields: ["formatted_address", "geometry"],
     });
 
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (place.geometry) destination.value = place.formatted_address;
+    originAutocomplete.addListener("place_changed", () => {
+      const place = originAutocomplete.getPlace();
+      if (place.geometry) {
+        origin.value = place.formatted_address;
+        originData = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+          address: place.formatted_address,
+        };
+      }
+    });
+  } else {
+    console.error("Origin Input not found");
+  }
 
-      destinationData = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-        address: place.formatted_address,
-      };
+  // Setup Destination Autocomplete
+  const destEl = destinationInput.value?.$el?.querySelector("input");
+  if (destEl) {
+    destinationAutocomplete = new google.places.Autocomplete(destEl, {
+      fields: ["formatted_address", "geometry"],
+    });
+
+    destinationAutocomplete.addListener("place_changed", () => {
+      const place = destinationAutocomplete.getPlace();
+      if (place.geometry) {
+        destination.value = place.formatted_address;
+        destinationData = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+          address: place.formatted_address,
+        };
+      }
     });
   } else {
     console.error("Destination Input not found");
   }
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
-    originData.lat = pos.coords.latitude;
-    originData.lng = pos.coords.longitude;
-    userPosition = {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
-    };
+    // Only set if not already set by user (though on mount it's likely empty)
+    if (!originData.lat) {
+      originData.lat = pos.coords.latitude;
+      originData.lng = pos.coords.longitude;
+      userPosition = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
 
-    await findCurrentAddress(apiKey);
+      await findCurrentAddress(apiKey);
+    }
   });
 });
 
@@ -147,13 +175,21 @@ async function findCurrentAddress(apiKey) {
   const response = await axios.get(url);
 
   const address = response.data.results[0].formatted_address;
-  origin.value = address;
-  originData.address = address;
+  // Update only if user hasn't typed anything yet
+  if (!origin.value) {
+    origin.value = address;
+    originData.address = address;
+  }
 }
 
 async function confirm() {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
+
+  if (!originData.lat || !originData.lng) {
+    alert("Select a valid origin.");
+    return;
+  }
 
   if (!destinationData.lat || !destinationData.lng) {
     alert("Select a valid destination.");
@@ -161,10 +197,10 @@ async function confirm() {
   }
 
   const body = {
-    clientLoc: `${originData.lat},${originData.lng}`,     // STRING
+    clientLoc: `${originData.lat},${originData.lng}`, // STRING
     destinyLoc: `${destinationData.lat},${destinationData.lng}`, // STRING
-    idClient: userId,                                     // ID DO CLIENTE
-    accept: false
+    idClient: userId, // ID DO CLIENTE
+    accept: false,
   };
 
   console.log("Enviando pedido:", body);
@@ -173,14 +209,13 @@ async function confirm() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token
+      Authorization: token,
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   router.push("/scheduletransport");
 }
-
 </script>
 
 <style scoped>

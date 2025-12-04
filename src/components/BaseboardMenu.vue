@@ -1,41 +1,61 @@
 <template>
   <div class="baseboard">
-    <div class="tab" :class="{ active: route.name === 'Home' }" @click="$router.push('/')">
-      <v-icon icon="mdi-home"></v-icon>
-      Home
+    <div
+      class="tab"
+      :class="{ active: route.name === 'Home' }"
+      @click="$router.push('/')"
+    >
+      <v-icon icon="mdi-home" color="#00E676" size="24"></v-icon>
+      <span style="color: #00e676">Home</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Job' }" @click="$router.push('/job')">
-      <v-icon icon="mdi-truck"></v-icon>
-      Job
+    <div
+      class="tab"
+      :class="{ active: route.name === 'Job' }"
+      @click="$router.push('/job')"
+    >
+      <v-icon icon="mdi-truck" color="#00E676" size="24"></v-icon>
+      <span style="color: #00e676">Job</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Logout' }" @click="logout">
-      <v-icon icon="mdi-logout"></v-icon>
-      Logout
+    <div
+      class="tab"
+      :class="{ active: route.name === 'Logout' }"
+      @click="logout"
+    >
+      <v-icon icon="mdi-logout" color="#00E676" size="24"></v-icon>
+      <span style="color: #00e676">Logout</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Account' }" @click="$router.push('/account')">
-      <v-icon icon="mdi-bank"></v-icon>
-      Account
+    <div
+      class="tab"
+      :class="{ active: route.name === 'Account' }"
+      @click="$router.push('/account')"
+    >
+      <v-icon icon="mdi-bank" color="#00E676" size="24"></v-icon>
+      <span style="color: #00e676">Account</span>
     </div>
 
-    <div class="tab" :class="{ active: route.name === 'Profile' }" @click="$router.push('/profile')">
-      <v-icon icon="mdi-account"></v-icon>
-      Profile
+    <div
+      class="tab"
+      :class="{ active: route.name === 'Profile' }"
+      @click="$router.push('/profile')"
+    >
+      <v-icon icon="mdi-account" color="#00E676" size="24"></v-icon>
+      <span style="color: #00e676">Profile</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 
 async function logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  router.push('/login');
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  router.push("/login");
 }
 </script>
 
