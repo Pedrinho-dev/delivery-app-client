@@ -9,8 +9,14 @@
       <v-text-field
         label="Your location"
         v-model="origin"
-        readonly
+        ref="originInput"
         prepend-inner-icon="mdi-crosshairs-gps"
+        variant="solo-filled"
+        bg-color="#181e36"
+        color="white"
+        flat
+        hide-details
+        class="mb-4 rounded-xl"
       />
 
       <v-text-field
@@ -18,6 +24,12 @@
         ref="destinationInput"
         placeholder="Where go?"
         prepend-inner-icon="mdi-map-marker"
+        variant="solo-filled"
+        bg-color="#181e36"
+        color="white"
+        flat
+        hide-details
+        class="mb-6 rounded-xl"
       />
 
       <div class="previous-destinations">
@@ -65,7 +77,7 @@
         <v-divider horizontal class="mx-3"></v-divider>
       </div>
 
-      <v-btn class="fixed-btn" color="black" block @click="confirm">
+      <v-btn class="fixed-btn" color="#00E676" block @click="confirm">
         Next
       </v-btn>
     </div>
@@ -86,9 +98,11 @@ const router = useRouter();
 const addressStores = useAddressStore();
 const origin = ref("");
 const destination = ref("");
+const originInput = ref(null);
 const destinationInput = ref(null);
 
-let autocomplete;
+let originAutocomplete;
+let destinationAutocomplete;
 let originData = { lat: null, lng: null, address: "" };
 let destinationData = { lat: null, lng: null, address: "" };
 let userPosition = null;
@@ -97,36 +111,62 @@ onMounted(async () => {
   const apiKey = "AIzaSyCoQ58bNGXYgXOMKAlTjPjgrr6_4N2gyY0";
   const google = await loadGoogleMaps(apiKey, ["places"]);
 
-  const inputEl = destinationInput.value?.$el?.querySelector("input");
-
-  if (inputEl) {
-    autocomplete = new google.places.Autocomplete(inputEl, {
+  // Setup Origin Autocomplete
+  const originEl = originInput.value?.$el?.querySelector("input");
+  if (originEl) {
+    originAutocomplete = new google.places.Autocomplete(originEl, {
       fields: ["formatted_address", "geometry"],
     });
 
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (place.geometry) destination.value = place.formatted_address;
+    originAutocomplete.addListener("place_changed", () => {
+      const place = originAutocomplete.getPlace();
+      if (place.geometry) {
+        origin.value = place.formatted_address;
+        originData = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+          address: place.formatted_address,
+        };
+      }
+    });
+  } else {
+    console.error("Origin Input not found");
+  }
 
-      destinationData = {
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-        address: place.formatted_address,
-      };
+  // Setup Destination Autocomplete
+  const destEl = destinationInput.value?.$el?.querySelector("input");
+  if (destEl) {
+    destinationAutocomplete = new google.places.Autocomplete(destEl, {
+      fields: ["formatted_address", "geometry"],
+    });
+
+    destinationAutocomplete.addListener("place_changed", () => {
+      const place = destinationAutocomplete.getPlace();
+      if (place.geometry) {
+        destination.value = place.formatted_address;
+        destinationData = {
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+          address: place.formatted_address,
+        };
+      }
     });
   } else {
     console.error("Destination Input not found");
   }
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
-    originData.lat = pos.coords.latitude;
-    originData.lng = pos.coords.longitude;
-    userPosition = {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
-    };
+    // Only set if not already set by user (though on mount it's likely empty)
+    if (!originData.lat) {
+      originData.lat = pos.coords.latitude;
+      originData.lng = pos.coords.longitude;
+      userPosition = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
 
-    await findCurrentAddress(apiKey);
+      await findCurrentAddress(apiKey);
+    }
   });
 });
 
@@ -135,23 +175,40 @@ async function findCurrentAddress(apiKey) {
   const response = await axios.get(url);
 
   const address = response.data.results[0].formatted_address;
-  origin.value = address;
-  originData.address = address;
+  // Update only if user hasn't typed anything yet
+  if (!origin.value) {
+    origin.value = address;
+    originData.address = address;
+  }
 }
 
-function confirm() {
-  const orders = [
-    {
-      origin: originData,
-      destination: destinationData,
-    },
-  ];
+async function confirm() {
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
 
-  addressStores.setOrders(orders[0]);
+  if (!originData.lat || !originData.lng) {
+    alert("Select a valid origin.");
+    return;
+  }
 
-  console.log("Salvo no Pinia:");
-  console.log("Origem: ", origin.value);
-  console.log("Destino: ", destination.value);
+  if (!destinationData.lat || !destinationData.lng) {
+    alert("Select a valid destination.");
+    return;
+  }
+
+  addressStores.setOrders({
+    origin: originData,
+    destination: destinationData,
+  });
+
+  const body = {
+    clientLoc: originData.address,
+    destinyLoc: destinationData.address,
+    idClient: userId,
+    accept: false,
+  };
+
+  console.log("Enviando pedido:", body);
   router.push("/scheduletransport");
 }
 </script>
@@ -159,17 +216,30 @@ function confirm() {
 <style scoped>
 .select-container {
   width: 100%;
-  height: 100%;
-  background: white;
-  color: black;
+  min-height: 100vh;
+  background: #101326;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
 }
 
 .header-map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 60px;
+  display: flex;
   align-items: center;
   justify-content: left;
   gap: 2rem;
   font-size: 15px;
+  color: #ffffff;
+  background-color: #101326;
+  z-index: 10;
+  padding-left: 20px;
 }
 
 .form-box {
@@ -180,8 +250,31 @@ function confirm() {
   padding: 20px;
 }
 
+:deep(.v-field) {
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+:deep(.v-field__input) {
+  color: #ffffff !important;
+}
+
+:deep(.v-label) {
+  color: #8f9bb3 !important;
+}
+
+:deep(.v-icon) {
+  color: #00e676 !important;
+}
+
 .previous-destinations {
   padding-bottom: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #181e36;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .title-icon {
@@ -192,6 +285,7 @@ function confirm() {
 
 .title-icon h2 {
   font-size: 16px;
+  color: #ffffff;
 }
 
 span {
@@ -200,6 +294,7 @@ span {
   padding: 4px;
   font-size: 14px;
   margin-left: 20px;
+  color: #8f9bb3;
 }
 
 .fixed-btn {
@@ -207,5 +302,8 @@ span {
   left: 50%;
   bottom: 80px;
   transform: translateX(-50%);
+  color: #000000 !important;
+  border-radius: 12px;
+  font-weight: bold;
 }
 </style>

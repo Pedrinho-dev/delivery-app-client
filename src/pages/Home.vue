@@ -1,6 +1,5 @@
 <template>
   <div class="map-content">
-
     <header class="header-map">
       <h2>UberMap</h2>
       <div class="acount_balance">
@@ -22,7 +21,7 @@
     </div>
 
     <div ref="mapRef" class="map"></div>
-    
+
     <div v-if="distance && time" class="box-info">
       <p><strong>Distance:</strong> {{ distance }}</p>
       <p><strong>Estimate Time:</strong> {{ time }}</p>
@@ -38,90 +37,158 @@ import axios from 'axios'
 import BaseboardMenu from "@/components/BaseboardMenu.vue";
 import { loadGoogleMaps } from '../composables/useGoogleMaps'
 
-const distance = ref(null)
-const time = ref(null)
+const distance = ref(null);
+const time = ref(null);
 
-const originText = ref("")      // <-- Endereço atual
-const destinationText = ref("")     // <-- Endereço escolhido
+const originText = ref("");
+const destinationText = ref("");
 
-const mapRef = ref(null)
-const searchInput = ref(null)
+const mapRef = ref(null);
+const searchInput = ref(null);
 
-let map
-let marker
-let autocomplete
-let directionsService
-let directionsRenderer
-let userPosition = null
+let map;
+let marker;
+let autocomplete;
+let directionsService;
+let directionsRenderer;
+let userPosition = null;
 
 onMounted(async () => {
-  const apiKey = 'AIzaSyCoQ58bNGXYgXOMKAlTjPjgrr6_4N2gyY0'
-  const google = await loadGoogleMaps(apiKey, ['places'])
+  const apiKey = "AIzaSyCoQ58bNGXYgXOMKAlTjPjgrr6_4N2gyY0";
+  const google = await loadGoogleMaps(apiKey, ["places"]);
 
-  navigator.geolocation.getCurrentPosition(async (pos) => {
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      userPosition = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      };
 
-    userPosition = {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude
+      await findCurrentAddress(apiKey);
+
+      startMap(google);
+    },
+    async () => {
+      userPosition = { lat: -20.4697, lng: -54.6201 };
+
+      await findCurrentAddress(apiKey);
+      startMap(google);
     }
-
-
-    await findCurrentAddress(apiKey)
-
-    startMap(google)
-
-  }, async () => {
-
-    userPosition = { lat: -20.4697, lng: -54.6201 }
-
-    await findCurrentAddress(apiKey)
-    startMap(google)
-  })
-})
+  );
+});
 
 async function findCurrentAddress(apiKey) {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userPosition.lat},${userPosition.lng}&key=${apiKey}`
-  const response = await axios.get(url)
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userPosition.lat},${userPosition.lng}&key=${apiKey}`;
+  const response = await axios.get(url);
 
-  originText.value = response.data.results[0].formatted_address
+  originText.value = response.data.results[0].formatted_address;
 
-  console.log(originText.value)
+  console.log(originText.value);
 }
 
 function startMap(google) {
-
   map = new google.Map(mapRef.value, {
     center: userPosition,
-    zoom: 15
-  })
+    zoom: 15,
+    styles: [
+      { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+      { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+      {
+        featureType: "administrative.locality",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#d59563" }],
+      },
+      {
+        featureType: "poi",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#d59563" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "geometry",
+        stylers: [{ color: "#263c3f" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#6b9a76" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{ color: "#38414e" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#212a37" }],
+      },
+      {
+        featureType: "road",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9ca5b3" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#746855" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#1f2835" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#f3d19c" }],
+      },
+      {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#17263c" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#515c6d" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#17263c" }],
+      },
+    ],
+  });
 
   marker = new google.Marker({
     position: userPosition,
     map,
-    title: 'Your location'
-  })
+    title: "Your location",
+  });
 
-  directionsService = new google.DirectionsService()
-  directionsRenderer = new google.DirectionsRenderer()
-  directionsRenderer.setMap(map)
+  directionsService = new google.DirectionsService();
+  directionsRenderer = new google.DirectionsRenderer();
+  directionsRenderer.setMap(map);
 
   autocomplete = new google.places.Autocomplete(searchInput.value, {
-    fields: ['geometry', 'formatted_address', 'name'],
-  })
+    fields: ["geometry", "formatted_address", "name"],
+  });
 
-  autocomplete.addListener('place_changed', () => {
-    const place = autocomplete.getPlace()
-    if (!place.geometry) return
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    if (!place.geometry) return;
 
-    destinationText.value = place.formatted_address
+    destinationText.value = place.formatted_address;
 
     const destination = {
       lat: place.geometry.location.lat(),
-      lng: place.geometry.location.lng()
-    }
+      lng: place.geometry.location.lng(),
+    };
 
-    calculateRoute(destination)
-  })
+    calculateRoute(destination);
+  });
 }
 
 function calculateRoute(destination) {
@@ -129,20 +196,20 @@ function calculateRoute(destination) {
     {
       origin: userPosition,
       destination: destination,
-      travelMode: 'DRIVING'
+      travelMode: "DRIVING",
     },
     (result, status) => {
-      if (status === 'OK') {
-        directionsRenderer.setDirections(result)
+      if (status === "OK") {
+        directionsRenderer.setDirections(result);
 
-        const distance = result.routes[0].legs[0].distance.text
-        const duration = result.routes[0].legs[0].duration.text
-        
-        distance.value = distance
-        time.value = duration
+        const distance = result.routes[0].legs[0].distance.text;
+        const duration = result.routes[0].legs[0].duration.text;
+
+        distance.value = distance;
+        time.value = duration;
       }
     }
-  )
+  );
 }
 </script>
 
@@ -151,6 +218,7 @@ function calculateRoute(destination) {
   width: 100vw;
   height: 100vh;
   position: relative;
+  background-color: #101326;
 }
 
 .map {
@@ -158,41 +226,41 @@ function calculateRoute(destination) {
   height: 100%;
 }
 
-.header-map{
+.header-map {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 70px;
-  background: white;
+  background: #181e36;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-left: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   z-index: 20;
-  color: black;
+  color: #ffffff;
 }
 
-.acount_balance{
+.acount_balance {
   margin-right: 48px;
-  background-color: #d3d3d3;
+  background-color: #2e3a59;
   padding: 8px;
   border-radius: 1rem;
   display: flex;
   align-items: center;
+  color: #ffffff;
 }
-
 
 .input-content {
   position: absolute;
   top: 80px;
   right: 20px;
   z-index: 10;
-  background: white;
+  background: #181e36;
   padding: 12px;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -203,32 +271,40 @@ function calculateRoute(destination) {
   width: 90%;
   padding: 8px;
   margin-top: 2px;
-  color: black;
+  color: #ffffff;
+  background-color: #101326;
+  border: 1px solid #2e3a59;
+  border-radius: 8px;
 }
 
-.baseboard{
+.input-box input::placeholder {
+  color: #8f9bb3;
+}
+
+.baseboard {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 80px;
-  background: white;
+  background: #181e36;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
   z-index: 20;
 }
 
-.baseboard .tab{
+.baseboard .tab {
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 4px;
   font-size: 14px;
+  color: #8f9bb3;
 }
 
-.baseboard img{
+.baseboard img {
   width: 28px;
   height: 28px;
 }
@@ -238,11 +314,12 @@ function calculateRoute(destination) {
   bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
+  background: #181e36;
   padding: 12px 18px;
   border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
   z-index: 9999;
-  color: black;
+  color: #ffffff;
+  border: 1px solid #00e676;
 }
 </style>

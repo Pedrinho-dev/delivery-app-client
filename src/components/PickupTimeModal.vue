@@ -1,9 +1,13 @@
 <template>
   <v-dialog v-model="isOpen" transition="dialog-bottom-transition" fullscreen>
-    <v-card class="bg-white">
-      <v-toolbar flat color="white">
-        <v-btn icon="mdi-chevron-left" @click="closeModal"></v-btn>
-        <v-toolbar-title class="text-body-1 font-weight-bold">
+    <v-card class="bg-white" style="background-color: #181e36 !important">
+      <v-toolbar flat color="#181e36">
+        <v-btn
+          icon="mdi-chevron-left"
+          @click="closeModal"
+          color="white"
+        ></v-btn>
+        <v-toolbar-title class="text-body-1 font-weight-bold text-white">
           Schedule a Transport
         </v-toolbar-title>
       </v-toolbar>
@@ -11,93 +15,93 @@
       <v-card-text
         class="d-flex flex-column align-center position-relative fill-height pa-4"
       >
-        <v-sheet class="text-h5 font-weight-bold text-center mb-0">
+        <v-sheet
+          class="text-h5 font-weight-bold text-center mb-0 text-white"
+          color="transparent"
+        >
           Choose a Pickup Time
         </v-sheet>
-        <v-sheet class="text-caption text-grey text-center mt-1 mb-6">
+        <v-sheet
+          class="text-caption text-grey text-center mt-1 mb-6"
+          color="transparent"
+        >
           Time Shown in EST
         </v-sheet>
 
         <v-sheet
-          class="d-flex justify-center w-100 mb-12 position-relative"
-          style="height: 200px"
+          class="d-flex justify-center align-center w-100 mb-12 position-relative"
+          style="height: 200px; gap: 16px"
           color="transparent"
         >
-          <v-sheet class="scroll-column" @wheel.prevent>
-            <v-sheet class="spacer-item"></v-sheet>
+          <v-sheet class="scroll-column" @wheel.prevent color="transparent">
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
             <v-sheet
               v-for="m in months"
               :key="m"
               class="picker-item"
-              :class="{
-                'text-black font-weight-bold text-h6': selected.month === m,
-                'text-grey': selected.month !== m,
-              }"
+              color="transparent"
+              :class="
+                selected.month === m ? 'item-selected' : 'item-unselected'
+              "
               @click="selected.month = m"
             >
               {{ m }}
             </v-sheet>
-            <v-sheet class="spacer-item"></v-sheet>
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
           </v-sheet>
 
-          <v-sheet class="scroll-column" @wheel.prevent>
-            <v-sheet class="spacer-item"></v-sheet>
+          <v-sheet class="scroll-column" @wheel.prevent color="transparent">
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
             <v-sheet
               v-for="d in days"
               :key="d"
               class="picker-item"
-              :class="{
-                'text-black font-weight-bold text-h6': selected.day === d,
-                'text-grey': selected.day !== d,
-              }"
+              color="transparent"
+              :class="selected.day === d ? 'item-selected' : 'item-unselected'"
               @click="selected.day = d"
             >
               {{ d }}
             </v-sheet>
-            <v-sheet class="spacer-item"></v-sheet>
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
           </v-sheet>
 
-          <v-sheet class="scroll-column" @wheel.prevent>
-            <v-sheet class="spacer-item"></v-sheet>
+          <v-sheet class="scroll-column" @wheel.prevent color="transparent">
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
             <v-sheet
               v-for="h in hours"
               :key="h"
               class="picker-item"
-              :class="{
-                'text-black font-weight-bold text-h6': selected.hour === h,
-                'text-grey': selected.hour !== h,
-              }"
+              color="transparent"
+              :class="selected.hour === h ? 'item-selected' : 'item-unselected'"
               @click="selected.hour = h"
             >
               {{ h }}
             </v-sheet>
-            <v-sheet class="spacer-item"></v-sheet>
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
           </v-sheet>
 
-          <v-sheet class="scroll-column" @wheel.prevent>
-            <v-sheet class="spacer-item"></v-sheet>
+          <v-sheet class="scroll-column" @wheel.prevent color="transparent">
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
             <v-sheet
               v-for="p in periods"
               :key="p"
               class="picker-item"
-              :class="{
-                'text-black font-weight-bold text-h6': selected.ampm === p,
-                'text-grey': selected.ampm !== p,
-              }"
+              color="transparent"
+              :class="selected.ampm === p ? 'item-selected' : 'item-unselected'"
               @click="selected.ampm = p"
             >
               {{ p }}
             </v-sheet>
-            <v-sheet class="spacer-item"></v-sheet>
+            <v-sheet class="spacer-item" color="transparent"></v-sheet>
           </v-sheet>
         </v-sheet>
 
         <v-btn
-          color="black"
+          color="#00E676"
           width="80%"
           height="60"
           rounded="xl"
-          class="text-capitalize font-weight-bold mt-auto mb-8 elevation-0"
+          class="text-capitalize font-weight-bold mt-auto mb-8 elevation-0 text-black"
           @click="confirmSelection"
         >
           Next
@@ -137,7 +141,6 @@ const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const hours = Array.from({ length: 12 }, (_, i) => i + 1);
 const periods = ["AM", "PM"];
 
-// Estado Reativo da Seleção
 const selected = reactive({
   month: "January",
   day: 1,
@@ -145,7 +148,6 @@ const selected = reactive({
   ampm: "AM",
 });
 
-// Sincronização do Modal
 watch(
   () => props.modelValue,
   (val) => {
@@ -189,14 +191,11 @@ function confirmSelection() {
 
   transportStore.saveScheduledTime(isoDateString, displayString);
   emit("update:modelValue", false);
-  router.push("/finding-driver");
+  router.push("/findingdriver");
 }
 </script>
 
 <style scoped>
-/* --- CSS DO WHEEL PICKER --- */
-
-/* Coluna Rolável */
 .scroll-column {
   height: 100%;
   overflow-y: scroll;
@@ -206,7 +205,6 @@ function confirmSelection() {
   scrollbar-width: none;
 }
 
-/* Item Individual (Mês, Dia, Ano) */
 .picker-item {
   height: 50px;
   display: flex;
@@ -217,7 +215,19 @@ function confirmSelection() {
   transition: all 0.2s ease;
 }
 
-/*  Espaçador Invisível */
+.item-unselected {
+  color: #b0bec5 !important;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.item-selected {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.25rem;
+  opacity: 1;
+}
+
 .spacer-item {
   height: 75px;
 }
