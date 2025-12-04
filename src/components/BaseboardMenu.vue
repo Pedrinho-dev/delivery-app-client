@@ -1,55 +1,35 @@
 <template>
   <div class="baseboard">
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Home' }"
-      @click="$router.push('/')"
-    >
+    <div class="tab" @click="$router.push('/')">
       <v-icon icon="mdi-home" color="#00E676" size="24"></v-icon>
-      <span style="color: #00e676">Home</span>
+      <span>Home</span>
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Job' }"
-      @click="$router.push('/job')"
-    >
+    <div class="tab" @click="$router.push('/job')">
       <v-icon icon="mdi-truck" color="#00E676" size="24"></v-icon>
-      <span style="color: #00e676">Job</span>
+      <span>Job</span>
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Logout' }"
-      @click="logout"
-    >
+    <div class="tab" @click="logout">
       <v-icon icon="mdi-logout" color="#00E676" size="24"></v-icon>
-      <span style="color: #00e676">Logout</span>
+      <span>Logout</span>
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Account' }"
-      @click="$router.push('/account')"
-    >
+    <div class="tab" @click="$router.push('/account')">
       <v-icon icon="mdi-bank" color="#00E676" size="24"></v-icon>
-      <span style="color: #00e676">Account</span>
+      <span>Account</span>
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Profile' }"
-      @click="$router.push('/profile')"
-    >
+    <div class="tab" @click="$router.push('/profile')">
       <v-icon icon="mdi-account" color="#00E676" size="24"></v-icon>
-      <span style="color: #00e676">Profile</span>
+      <span>Profile</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRoute, useRouter } from "vue-router";
-const route = useRoute();
+import { useRouter } from "vue-router";
+
 const router = useRouter();
 
 async function logout() {
@@ -81,20 +61,6 @@ async function logout() {
   gap: 4px;
   font-size: 14px;
   cursor: pointer;
-  color: #8f9bb3;
-}
-
-.tab.active::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 20%;
-  height: 4px;
-  background: #00e676;
-  border-radius: 2px;
-}
-
-.tab.active {
   color: #00e676;
 }
 </style>
