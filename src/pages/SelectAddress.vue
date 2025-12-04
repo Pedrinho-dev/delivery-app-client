@@ -196,23 +196,32 @@ async function confirm() {
     return;
   }
 
+  addressStores.setOrders({
+    origin: originData,
+    destination: destinationData,
+  });
+
   const body = {
-    clientLoc: `${originData.lat},${originData.lng}`, // STRING
-    destinyLoc: `${destinationData.lat},${destinationData.lng}`, // STRING
-    idClient: userId, // ID DO CLIENTE
+    clientLoc: originData.address,
+    destinyLoc: destinationData.address,
+    idClient: userId,
     accept: false,
   };
 
   console.log("Enviando pedido:", body);
 
-  await fetch("http://localhost:3000/order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: token,
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    await fetch("http://localhost:3000/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    console.error("Error creating order:", error);
+  }
 
   router.push("/scheduletransport");
 }

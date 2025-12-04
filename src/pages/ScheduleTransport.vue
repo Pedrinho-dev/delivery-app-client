@@ -170,7 +170,6 @@ onMounted(async () => {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         };
-
         initiateMap(google);
       },
       async () => {
@@ -268,8 +267,15 @@ function initiateMap(google) {
   directionsRenderer = new google.DirectionsRenderer();
   directionsRenderer.setMap(map);
 
-  if (addressStore.destination) {
-    calculateRoute(addressStore.destination);
+  if (
+    addressStore.destination &&
+    addressStore.destination.lat &&
+    addressStore.destination.lng
+  ) {
+    calculateRoute({
+      lat: addressStore.destination.lat,
+      lng: addressStore.destination.lng,
+    });
   }
 }
 
