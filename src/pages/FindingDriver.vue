@@ -1,23 +1,23 @@
 <template>
     <div class="finding-driver-container">
-        <!-- Header -->
+
         <v-app-bar color="#181e36" density="comfortable" elevation="2">
             <v-toolbar-title class="text-body-1 font-weight-medium">
                 Waiting for Transporter Confirmation
             </v-toolbar-title>
         </v-app-bar>
 
-        <!-- Mapa -->
+
         <div ref="mapRef" class="map"></div>
 
-        <!-- Card de informações -->
+
         <v-bottom-sheet class="info-sheet" model-value persistent>
             <v-card color="#181e36" rounded="xl">
                 <v-card-text class="pa-6">
-                    <!-- Rota -->
+
                     <v-card color="#101326" rounded="lg" class="mb-4">
                         <v-card-text class="py-4">
-                            <!-- Origem -->
+
                             <v-list-item class="px-0">
                                 <template v-slot:prepend>
                                     <v-avatar color="#00E676" size="12"></v-avatar>
@@ -30,12 +30,12 @@
                                 </v-list-item-subtitle>
                             </v-list-item>
 
-                            <!-- Divider -->
+
                             <v-divider class="my-2 ml-1" color="#2e3a59" thickness="2"
                                 style="width: 2px; height: 20px; margin-left: 18px !important;">
                             </v-divider>
 
-                            <!-- Destino -->
+
                             <v-list-item class="px-0">
                                 <template v-slot:prepend>
                                     <v-icon icon="mdi-map-marker" color="#ef5350" size="20"></v-icon>
@@ -50,11 +50,11 @@
                         </v-card-text>
                     </v-card>
 
-                    <!-- Status com animação do carro -->
+
                     <div class="text-center py-6">
                         <h3 class="text-h6 font-weight-bold mb-6">Finding Driver</h3>
 
-                        <!-- Animação do carro -->
+
                         <div class="car-animation-container mx-auto">
                             <v-sheet color="transparent" class="road-container">
                                 <v-sheet color="#2e3a59" class="road-segment" v-for="i in 7" :key="i" height="2"
@@ -70,7 +70,7 @@
                         </p>
                     </div>
 
-                    <!-- Botões -->
+
                     <v-row dense class="mt-4">
                         <v-col cols="12">
                             <v-btn color="#00E676" block size="large" rounded="xl" elevation="0"
@@ -94,12 +94,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { loadGoogleMaps } from "@/composables/useGoogleMaps";
 import { useTransportStore } from "@/stores/transport";
 import { useAddressStore } from "@/stores/addressStores";
 import BaseboardMenu from "@/components/BaseboardMenu.vue";
+import api from "@/axios/api";
 
 const router = useRouter();
 const transportStore = useTransportStore();
@@ -108,11 +109,13 @@ const addressStore = useAddressStore();
 const mapRef = ref(null);
 const origin = ref("");
 const destination = ref("");
+const orderId = ref(null);
+let pollingInterval = null;
 
 let map;
 
 onMounted(async () => {
-    // Carregar endereços do store
+
     origin.value =
         transportStore.origin?.address ||
         addressStore.origin?.address ||
@@ -157,13 +160,69 @@ onMounted(async () => {
             },
         ],
     });
+
+    // Iniciar polling para verificar status do pedido
+    startPolling();
 });
+
+onUnmounted(() => {
+    // Limpar intervalo ao sair da página
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+});
+
+async function startPolling() {
+    // Verificar status a cada 3 segundos
+    pollingInterval = setInterval(async () => {
+        await checkOrderStatus();
+    }, 1000);
+}
+
+async function checkOrderStatus() {
+    try {
+        const userId = localStorage.getItem("userId");
+
+        // Buscar os pedidos do usuário
+        const response = await api.get(`/order?idClient=${userId}`);
+
+        if (response.data && response.data.length > 0) {
+            // Pegar o pedido mais recente
+            const latestOrder = response.data[response.data.length - 1];
+
+            // Verificar se foi aceito
+            if (latestOrder.accept === true) {
+                // Parar o polling
+                if (pollingInterval) {
+                    clearInterval(pollingInterval);
+                }
+
+                // Salvar ID do pedido aceito
+                orderId.value = latestOrder._id;
+
+                // Navegar para tela de pedido aceito
+                router.push('/acceptorder');
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao verificar status do pedido:", error);
+    }
+}
 
 function retry() {
     console.log("Retrying to find driver...");
+    // Reiniciar o polling se necessário
+    if (!pollingInterval) {
+        startPolling();
+    }
 }
 
 function cancelTransport() {
+
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
+    }
+
     transportStore.setScheduleType(null);
     router.push("/home");
 }
@@ -186,7 +245,7 @@ function cancelTransport() {
     left: 0;
 }
 
-/* Animação do carro */
+
 .car-animation-container {
     position: relative;
     width: 280px;

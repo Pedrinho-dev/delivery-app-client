@@ -8,6 +8,7 @@ export const useTransportStore = defineStore("transport", {
     scheduleType: null,
     origin: null,
     destination: null,
+    currentOrderId: null,
     scheduledOrder: {
       date: null,
       time: null,
@@ -18,6 +19,10 @@ export const useTransportStore = defineStore("transport", {
   actions: {
     setScheduleType(type) {
       this.scheduleType = type;
+    },
+
+    setCurrentOrderId(id) {
+      this.currentOrderId = id;
     },
 
     async reverseGeocode(lat, lng) {
@@ -72,6 +77,7 @@ export const useTransportStore = defineStore("transport", {
       try {
         const response = await api.post("/order", orderPayload);
         console.log("Pedido agendado criado com sucesso:", response.data);
+        this.currentOrderId = response.data._id;
         return response.data;
       } catch (error) {
         console.error("Erro ao criar pedido agendado:", error);
@@ -94,6 +100,7 @@ export const useTransportStore = defineStore("transport", {
       try {
         const response = await api.post("/order", orderPayload);
         console.log("Pedido criado com sucesso:", response.data);
+        this.currentOrderId = response.data._id;
         return response.data;
       } catch (error) {
         console.error("Erro ao criar pedido:", error);
