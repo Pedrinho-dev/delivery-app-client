@@ -191,7 +191,7 @@ function confirmSelection() {
 
   transportStore.saveScheduledTime(isoDateString, displayString);
   emit("update:modelValue", false);
-  router.push("/finding-driver");
+  router.push("/findingdriver");
 }
 </script>
 

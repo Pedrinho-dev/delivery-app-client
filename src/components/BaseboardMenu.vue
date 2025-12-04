@@ -1,37 +1,26 @@
 <template>
   <div class="baseboard">
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Home' }"
-      @click="$router.push('/')"
-    >
+    <div class="tab" :class="{ active: route.name === 'Home' }" @click="$router.push('/')">
       <v-icon icon="mdi-home"></v-icon>
       Home
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Job' }"
-      @click="$router.push('/job')"
-    >
+    <div class="tab" :class="{ active: route.name === 'Job' }" @click="$router.push('/job')">
       <v-icon icon="mdi-truck"></v-icon>
       Job
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Account' }"
-      @click="$router.push('/account')"
-    >
+    <div class="tab" :class="{ active: route.name === 'Logout' }" @click="logout">
+      <v-icon icon="mdi-logout"></v-icon>
+      Logout
+    </div>
+
+    <div class="tab" :class="{ active: route.name === 'Account' }" @click="$router.push('/account')">
       <v-icon icon="mdi-bank"></v-icon>
       Account
     </div>
 
-    <div
-      class="tab"
-      :class="{ active: route.name === 'Profile' }"
-      @click="$router.push('/profile')"
-    >
+    <div class="tab" :class="{ active: route.name === 'Profile' }" @click="$router.push('/profile')">
       <v-icon icon="mdi-account"></v-icon>
       Profile
     </div>
@@ -41,6 +30,13 @@
 <script setup>
 import { useRoute } from "vue-router";
 const route = useRoute();
+const router = useRouter();
+
+async function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  router.push('/login');
+}
 </script>
 
 <style scoped>

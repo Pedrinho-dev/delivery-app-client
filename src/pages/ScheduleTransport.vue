@@ -305,7 +305,7 @@ watch(
         transportStore.destination = addressStore.destination;
 
       transportStore.createOrder("now");
-      router.push("/finding-driver");
+      router.push("/findingdriver");
     }
   }
 );
