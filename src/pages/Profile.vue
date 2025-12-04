@@ -79,25 +79,4 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-.floating-alert {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  width: 90%;
-  max-width: 400px;
-  background-color: #181e36 !important;
-  color: white !important;
-  border: 1px solid #00e676;
-}
-
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.fill-height {
-  min-height: 100vh;
-}
-</style>
+<style scoped></style>
